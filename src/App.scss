@@ -1,0 +1,16 @@
+@import "~@blueprintjs/core/src/common/variables";
+@import "~@blueprintjs/core/src/common/mixins";
+@import "~@blueprintjs/core/src/blueprint.scss";
+
+body {
+  background: $black;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+
+  .path2 {
+    fill: $white;
+  }
+}
