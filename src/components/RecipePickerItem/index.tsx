@@ -1,3 +1,3 @@
-import { RecipePickerItem } from './RecipePickerItem';
+import RecipePickerItem from './RecipePickerItem';
 
 export default RecipePickerItem;

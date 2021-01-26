@@ -26,7 +26,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "npm-run-all lint:*",
+    "lint:js": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:prettier": "prettier \"src/**/*.{ts,tsx,scss}\" --list-different",
+    "fix": "npm-run-all fix:*",
+    "fix:js": "npm run lint:js -- --fix",
+    "fix:prettier": "npm run lint:prettier -- --write"
   },
   "eslintConfig": {
     "extends": [
@@ -45,5 +51,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1"
   }
 }
