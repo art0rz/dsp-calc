@@ -2,6 +2,7 @@
   "name": "dsp-calc",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/dsp-calc",
   "dependencies": {
     "@blueprintjs/core": "^3.38.0",
     "@blueprintjs/select": "^3.15.3",
@@ -14,6 +15,7 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "classnames": "^2.2.6",
+    "gh-pages": "^3.1.0",
     "node-sass": "4.14.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -32,7 +34,9 @@
     "lint:prettier": "prettier \"src/**/*.{ts,tsx,scss}\" --list-different",
     "fix": "npm-run-all fix:*",
     "fix:js": "npm run lint:js -- --fix",
-    "fix:prettier": "npm run lint:prettier -- --write"
+    "fix:prettier": "npm run lint:prettier -- --write",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
