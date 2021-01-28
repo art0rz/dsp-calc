@@ -49,6 +49,10 @@ export const App = () => {
           <NavbarHeading>Dyson Sphere Program Calculator</NavbarHeading>
         </NavbarGroup>
         <NavbarGroup align={'right'}>
+          <Button rightIcon={'git-repo'} onClick={onClickOpenSettings}>
+            Github
+          </Button>
+          <NavbarDivider />
           <Button icon={'cog'} onClick={onClickOpenSettings} />
         </NavbarGroup>
       </Navbar>
