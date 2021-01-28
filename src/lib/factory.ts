@@ -48,7 +48,7 @@ export const calculateFactoryResults2 = (
     );
 
     if (existing === undefined) {
-      results.push({
+      results.unshift({
         outputItem: selection.item,
         recipe: selection.recipe,
         factory: recipe.factory,
