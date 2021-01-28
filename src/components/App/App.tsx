@@ -2,9 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   Button,
   Card,
-  Divider,
-  HTMLTable,
-  Icon,
   Navbar,
   NavbarDivider,
   NavbarGroup,
@@ -15,8 +12,6 @@ import { ReactComponent as Logo } from '../../dsp-logo.svg';
 import RecipePicker from '../RecipePicker';
 import SettingsPanel from '../SettingsPanel';
 import { ISelectedRecipe } from '../RecipePicker/RecipePicker';
-import { getItemName, getRecipeName } from '../../data/copy';
-import { getRecipesForItem, ItemIcons } from '../../data/recipes';
 import { calculateFactoryResults2 } from '../../lib/factory';
 import FactorioRecipeResult from '../FactoryRecipeResult';
 
