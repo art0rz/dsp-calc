@@ -80,32 +80,30 @@ export const App = () => {
                 ) {
                   const recipe = Recipes[selectedRecipe.recipe];
                   return (
-                    <>
-                      <tr>
-                        <td>
-                          <img
-                            className={'icon'}
-                            src={ItemIcons[selectedRecipe.item]}
-                          />
-                          {getItemName(selectedRecipe.item)}{' '}
-                          {getRecipesForItem(selectedRecipe.item).length > 1 ? (
-                            <>({getRecipeName(selectedRecipe.recipe)})</>
-                          ) : null}
-                        </td>
-                        <td>{selectedRecipe.itemsPerSecond}</td>
-                        <td>
-                          {recipe && (
-                            <>
-                              <img
-                                className={'icon'}
-                                src={ItemIcons[recipe.factory]}
-                              />
-                              {getItemName(recipe.factory)}
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                    </>
+                    <tr key={selectedRecipe.recipe}>
+                      <td>
+                        <img
+                          className={'icon'}
+                          src={ItemIcons[selectedRecipe.item]}
+                        />
+                        {getItemName(selectedRecipe.item)}{' '}
+                        {getRecipesForItem(selectedRecipe.item).length > 1 ? (
+                          <>({getRecipeName(selectedRecipe.recipe)})</>
+                        ) : null}
+                      </td>
+                      <td>{selectedRecipe.itemsPerSecond}</td>
+                      <td>
+                        {recipe && (
+                          <>
+                            <img
+                              className={'icon'}
+                              src={ItemIcons[recipe.factory]}
+                            />
+                            {getItemName(recipe.factory)}
+                          </>
+                        )}
+                      </td>
+                    </tr>
                   );
                 }
 

@@ -64,14 +64,12 @@ const RecipePicker = ({ onChange }: IRecipePickerProps) => {
     <Card>
       <h5 className={'bp3-heading'}>Selected recipes</h5>
       {selectedRecipes.map(selectedRecipe => (
-        <>
-          <RecipePickerItem
-            selectedRecipe={selectedRecipe}
-            key={selectedRecipe.item}
-            onChange={onRecipePickerChange}
-            availableItems={remainingItems}
-          />
-        </>
+        <RecipePickerItem
+          selectedRecipe={selectedRecipe}
+          key={selectedRecipe.item}
+          onChange={onRecipePickerChange}
+          availableItems={remainingItems}
+        />
       ))}
       <Button icon={'plus'} onClick={onNewRecipeClick}>
         Add new recipe

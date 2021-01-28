@@ -17,7 +17,7 @@ interface ItemSelectProps<T> {
   onItemSelect: (id: T) => void;
 }
 
-const ItemSelect = <T extends unknown>({
+const ItemSelect = <T extends string | number>({
   onItemSelect,
   list,
   getTranslation,
@@ -36,6 +36,7 @@ const ItemSelect = <T extends unknown>({
 
     return (
       <MenuItem
+        key={value}
         text={label}
         icon={<img width={'18'} src={icon} />}
         onClick={handleClick}
