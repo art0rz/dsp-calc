@@ -34,7 +34,7 @@ export const App = () => {
     setRecipes(newSelection);
   }, []);
 
-  const onClickGithub = useCallback(newSelection => {
+  const onClickGithub = useCallback(() => {
     window.open('https://github.com/art0rz/dsp-calc/', '_blank');
   }, []);
 
