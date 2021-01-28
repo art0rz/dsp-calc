@@ -18,6 +18,7 @@ import { ISelectedRecipe } from '../RecipePicker/RecipePicker';
 import { getItemName, getRecipeName } from '../../data/copy';
 import { getRecipesForItem, ItemIcons } from '../../data/recipes';
 import { calculateFactoryResults2 } from '../../lib/factory';
+import FactorioRecipeResult from '../FactoryRecipeResult';
 
 export const App = () => {
   const [showSettingsDrawer, setShowSettingsDrawer] = useState(false);
@@ -67,108 +68,7 @@ export const App = () => {
       {recipes.length > 0 && (
         <Card>
           <h5 className={'bp3-heading'}>Factory</h5>
-          <HTMLTable striped={true}>
-            <thead>
-              <tr>
-                <th>items</th>
-                <th>p/m</th>
-                <th>source</th>
-              </tr>
-            </thead>
-            <tbody>
-              {factoryResults.map(result => (
-                <React.Fragment key={result.outputItem}>
-                  <tr>
-                    <td>
-                      <Button minimal={true} icon={'chevron-right'} />
-                    </td>
-                    <td>
-                      <img
-                        className={'icon'}
-                        src={ItemIcons[result.outputItem]}
-                      />{' '}
-                      {getItemName(result.outputItem)}{' '}
-                      {getRecipesForItem(result.outputItem).length > 1 ? (
-                        <>({getRecipeName(result.recipe)})</>
-                      ) : null}
-                    </td>
-                    <td>{result.itemsPerSecond}</td>
-                    <td>
-                      <>
-                        <img
-                          className={'icon'}
-                          src={ItemIcons[result.factory]}
-                        />{' '}
-                        {getItemName(result.factory)}
-                      </>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colSpan={3}>
-                      <HTMLTable striped={true}>
-                        <tbody>
-                          {result.ingredients.map(ingredient => (
-                            <React.Fragment key={ingredient.item}>
-                              <tr>
-                                <td>
-                                  <img
-                                    className={'icon'}
-                                    src={ItemIcons[ingredient.item]}
-                                  />{' '}
-                                  <Icon icon={'arrow-right'} />{' '}
-                                  <img
-                                    className={'icon'}
-                                    src={ItemIcons[result.outputItem]}
-                                  />
-                                </td>
-                                <td>{ingredient.itemsPerSecond}</td>
-                                <td>
-                                  <img
-                                    className={'icon'}
-                                    src={ItemIcons[ingredient.factory]}
-                                  />
-                                </td>
-                              </tr>
-                            </React.Fragment>
-                          ))}
-                        </tbody>
-                      </HTMLTable>
-                      <Divider />
-
-                      <HTMLTable striped={true}>
-                        <tbody>
-                          <tr>
-                            {factoryResults
-                              .filter(res =>
-                                res.ingredients.find(
-                                  i => i.item === result.outputItem
-                                )
-                              )
-                              .map(f => (
-                                <React.Fragment key={f.outputItem}>
-                                  <td>
-                                    <img
-                                      className={'icon'}
-                                      src={ItemIcons[result.outputItem]}
-                                    />{' '}
-                                    <Icon icon={'arrow-right'} />{' '}
-                                    <img
-                                      className={'icon'}
-                                      src={ItemIcons[f.outputItem]}
-                                    />
-                                  </td>
-                                  <td>{f.itemsPerSecond}</td>
-                                </React.Fragment>
-                              ))}
-                          </tr>
-                        </tbody>
-                      </HTMLTable>
-                    </td>
-                  </tr>
-                </React.Fragment>
-              ))}
-            </tbody>
-          </HTMLTable>
+          <FactorioRecipeResult factoryResults={factoryResults} />
         </Card>
       )}
     </div>

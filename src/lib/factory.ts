@@ -6,18 +6,18 @@ export type StringKeyOf<T> = Extract<keyof T, string>;
 
 export type RecipeStringKeys = StringKeyOf<Recipe>;
 
-interface IFactoryResultIngredient {
+export interface IFactoryResultIngredient {
   item: Item;
   itemsPerSecond: number;
   factory: Item;
 }
 
-interface IFactoryResultUsedIn {
+export interface IFactoryResultUsedIn {
   recipe: IRecipe;
   itemsPerSecond: number;
 }
 
-interface IFactoryResult {
+export interface IFactoryResult {
   outputItem: Item;
   recipe: Recipe;
   factory: Item;
