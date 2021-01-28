@@ -8,3 +8,9 @@ declare module '*.svg' {
   export default _default;
   export const ReactComponent;
 }
+
+declare module '*.scss' {
+  const exp: { [key: string]: string };
+
+  export default exp;
+}

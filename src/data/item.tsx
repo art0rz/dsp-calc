@@ -6,4 +6,6 @@ export enum Item {
   GEAR_WHEEL,
   BELT_1,
   ASSEMBLER_1,
+  SMELTER,
+  MINING_DRILL,
 }

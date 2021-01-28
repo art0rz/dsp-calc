@@ -1,5 +1,4 @@
-import React, { useCallback, useState } from 'react';
-import './App.scss';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Button,
   Card,
@@ -9,12 +8,21 @@ import {
   NavbarGroup,
   NavbarHeading,
 } from '@blueprintjs/core';
+import './App.scss';
 import { ReactComponent as Logo } from '../../dsp-logo.svg';
 import RecipePicker from '../RecipePicker';
 import SettingsPanel from '../SettingsPanel';
+import { ISelectedRecipe } from '../RecipePicker/RecipePicker';
+import { getItemName, getRecipeName } from '../../data/copy';
+import { getRecipesForItem, ItemIcons, Recipes } from '../../data/recipes';
+import { calculateFactoryResults } from '../../lib/factory';
 
 export const App = () => {
   const [showSettingsDrawer, setShowSettingsDrawer] = useState(false);
+  const [factoryResults, setFactoryResults] = useState<
+    ReturnType<typeof calculateFactoryResults>
+  >({});
+  const [recipes, setRecipes] = useState<Array<ISelectedRecipe>>([]);
   const onClickOpenSettings = useCallback(
     () => setShowSettingsDrawer(true),
     []
@@ -24,9 +32,13 @@ export const App = () => {
     []
   );
 
-  const onRecipeSelectionChange = useCallback(recipes => {
-    console.log(recipes);
+  const onRecipeSelectionChange = useCallback(newSelection => {
+    setRecipes(newSelection);
   }, []);
+
+  useEffect(() => {
+    setFactoryResults(calculateFactoryResults(recipes));
+  }, [recipes]);
 
   return (
     <div className="bp3-dark">
@@ -46,30 +58,63 @@ export const App = () => {
         isOpen={showSettingsDrawer}
         onClose={onClickCloseSettings}
       />
-      <Card>
-        <h5 className={'bp3-heading'}>Factory</h5>
-        <HTMLTable striped={true}>
-          <thead>
-            <tr>
-              <th>items</th>
-              <th>p/m</th>
-              <th>source</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Iron ingot</td>
-              <td>5</td>
-              <td>Foo</td>
-            </tr>
-            <tr>
-              <td>Iron ingot</td>
-              <td>5</td>
-              <td>Foo</td>
-            </tr>
-          </tbody>
-        </HTMLTable>
-      </Card>
+      {recipes.length > 0 && (
+        <Card>
+          <h5 className={'bp3-heading'}>Factory</h5>
+          <HTMLTable striped={true}>
+            <thead>
+              <tr>
+                <th>items</th>
+                <th>p/m</th>
+                <th>source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.values(factoryResults).map(selectedRecipe => {
+                if (selectedRecipe === undefined) {
+                  return null;
+                }
+                if (
+                  selectedRecipe.item !== undefined &&
+                  selectedRecipe.recipe !== undefined
+                ) {
+                  const recipe = Recipes[selectedRecipe.recipe];
+                  return (
+                    <>
+                      <tr>
+                        <td>
+                          <img
+                            className={'icon'}
+                            src={ItemIcons[selectedRecipe.item]}
+                          />
+                          {getItemName(selectedRecipe.item)}{' '}
+                          {getRecipesForItem(selectedRecipe.item).length > 1 ? (
+                            <>({getRecipeName(selectedRecipe.recipe)})</>
+                          ) : null}
+                        </td>
+                        <td>{selectedRecipe.itemsPerSecond}</td>
+                        <td>
+                          {recipe && (
+                            <>
+                              <img
+                                className={'icon'}
+                                src={ItemIcons[recipe.factory]}
+                              />
+                              {getItemName(recipe.factory)}
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    </>
+                  );
+                }
+
+                return null;
+              })}
+            </tbody>
+          </HTMLTable>
+        </Card>
+      )}
     </div>
   );
 };

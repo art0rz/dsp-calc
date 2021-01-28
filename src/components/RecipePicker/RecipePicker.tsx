@@ -6,8 +6,8 @@ import { Item } from '../../data/item';
 import { Recipe } from '../../data/recipes';
 
 export interface ISelectedRecipe {
-  item?: Item;
-  recipe?: Recipe;
+  item: Item;
+  recipe: Recipe;
   itemsPerSecond: number;
 }
 
@@ -17,7 +17,7 @@ interface IRecipePickerProps {
 
 const RecipePicker = ({ onChange }: IRecipePickerProps) => {
   const [selectedRecipes, setSelectedRecipes] = useState<
-    Array<ISelectedRecipe>
+    Array<Partial<ISelectedRecipe>>
   >([
     {
       item: Item.IRON_PLATE,
@@ -33,12 +33,21 @@ const RecipePicker = ({ onChange }: IRecipePickerProps) => {
   const onRecipePickerChange = useCallback(
     (ref, newValues) => {
       const newSelection = [...selectedRecipes];
-      newSelection.splice(selectedRecipes.indexOf(ref), 1, newValues);
+      newSelection
+        .splice(selectedRecipes.indexOf(ref), 1, newValues)
+        .filter(n => n);
       setSelectedRecipes(newSelection.filter(n => n));
 
-      onChange(newSelection);
+      onChange(
+        newSelection.filter(
+          n =>
+            n.recipe !== undefined &&
+            n.item !== undefined &&
+            n.itemsPerSecond !== undefined
+        ) as Array<ISelectedRecipe>
+      );
     },
-    [selectedRecipes]
+    [selectedRecipes, onChange]
   );
 
   const onNewRecipeClick = useCallback(() => {

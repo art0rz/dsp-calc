@@ -17,7 +17,14 @@ interface ItemSelectProps<T> {
   onItemSelect: (id: T) => void;
 }
 
-const ItemSelect = <T extends unknown>(props: ItemSelectProps<T>) => {
+const ItemSelect = <T extends unknown>({
+  onItemSelect,
+  list,
+  getTranslation,
+  getIcon,
+  selectedItem,
+  placeholder,
+}: ItemSelectProps<T>) => {
   const ItemSelectComponent = Select.ofType<ListType<T>>();
   const renderSelectOption: ItemRenderer<ListType<T>> = (
     { value, label, icon },
@@ -36,14 +43,17 @@ const ItemSelect = <T extends unknown>(props: ItemSelectProps<T>) => {
     );
   };
 
-  const onItemSelect = useCallback((item: ListType<T>) => {
-    props.onItemSelect(item.value);
-  }, []);
+  const handleItemSelect = useCallback(
+    (item: ListType<T>) => {
+      onItemSelect(item.value);
+    },
+    [onItemSelect]
+  );
 
-  const itemsList = props.list.map(item => ({
+  const itemsList = list.map(item => ({
     value: item,
-    label: props.getTranslation(item),
-    icon: props.getIcon(item),
+    label: getTranslation(item),
+    icon: getIcon(item),
   }));
 
   return (
@@ -53,10 +63,10 @@ const ItemSelect = <T extends unknown>(props: ItemSelectProps<T>) => {
       }}
       itemRenderer={renderSelectOption}
       items={itemsList}
-      onItemSelect={onItemSelect}
+      onItemSelect={handleItemSelect}
       activeItem={
-        props.selectedItem
-          ? itemsList.find(item => item.value === props.selectedItem)
+        selectedItem !== undefined
+          ? itemsList.find(item => item.value === selectedItem)
           : undefined
       }
       itemsEqual={(item1: ListType<T>, item2: ListType<T>) =>
@@ -70,15 +80,15 @@ const ItemSelect = <T extends unknown>(props: ItemSelectProps<T>) => {
     >
       <Button
         text={
-          props.selectedItem
-            ? props.getTranslation(props.selectedItem)
-            : props.placeholder
+          selectedItem !== undefined
+            ? getTranslation(selectedItem)
+            : placeholder
         }
         alignText={'left'}
         rightIcon="double-caret-vertical"
         icon={
-          props.selectedItem ? (
-            <img width={'18'} src={props.getIcon(props.selectedItem)} />
+          selectedItem !== undefined ? (
+            <img width={'18'} src={getIcon(selectedItem)} />
           ) : null
         }
       />

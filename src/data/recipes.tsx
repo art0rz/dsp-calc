@@ -17,7 +17,7 @@ export interface IRecipe {
   baseDuration: number;
   ingredients: Array<IIngredient>;
   resultAmount: number;
-  factories: Array<Item>;
+  factory: Item;
   products: Array<IRecipeProduct>;
 }
 
@@ -33,10 +33,18 @@ export interface IIngredient {
 
 const recipeList: Array<IRecipe> = [
   {
+    id: Recipe.IRON_ORE,
+    baseDuration: 1,
+    resultAmount: 1,
+    factory: Item.MINING_DRILL,
+    ingredients: [],
+    products: [{ item: Item.IRON_ORE, amount: 1 }],
+  },
+  {
     id: Recipe.IRON_PLATE,
     baseDuration: 1,
     resultAmount: 1,
-    factories: [Item.ASSEMBLER_1],
+    factory: Item.SMELTER,
     ingredients: [
       {
         item: Item.IRON_ORE,
@@ -49,7 +57,7 @@ const recipeList: Array<IRecipe> = [
     id: Recipe.IRON_PLATE_2,
     baseDuration: 1,
     resultAmount: 1,
-    factories: [Item.ASSEMBLER_1],
+    factory: Item.SMELTER,
     ingredients: [
       {
         item: Item.IRON_ORE,
@@ -62,7 +70,7 @@ const recipeList: Array<IRecipe> = [
     id: Recipe.MAGNET,
     baseDuration: 1.5,
     resultAmount: 1,
-    factories: [Item.ASSEMBLER_1],
+    factory: Item.SMELTER,
     ingredients: [
       {
         item: Item.IRON_ORE,
@@ -75,7 +83,7 @@ const recipeList: Array<IRecipe> = [
     id: Recipe.GEAR_WHEEL,
     baseDuration: 1,
     resultAmount: 1,
-    factories: [Item.ASSEMBLER_1],
+    factory: Item.ASSEMBLER_1,
     ingredients: [
       {
         item: Item.IRON_PLATE,
@@ -88,7 +96,7 @@ const recipeList: Array<IRecipe> = [
     id: Recipe.BELT_1,
     baseDuration: 1,
     resultAmount: 3,
-    factories: [Item.ASSEMBLER_1],
+    factory: Item.ASSEMBLER_1,
     ingredients: [
       {
         item: Item.IRON_PLATE,
@@ -127,7 +135,7 @@ export const ItemIcons: { [key in Item]?: string } = $enum(Item)
     {}
   );
 
-export const Recipes: { [key in Item]?: IRecipe } = recipeList.reduce(
+export const Recipes: { [key in Recipe]?: IRecipe } = recipeList.reduce(
   (acc, recipe) => ({ ...acc, [recipe.id]: recipe }),
   {}
 );

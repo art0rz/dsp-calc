@@ -13,8 +13,11 @@ import {
 } from '../../data/recipes';
 
 interface IRecipePickerItemProps {
-  selectedRecipe: ISelectedRecipe;
-  onChange?: (ref: ISelectedRecipe, newValues?: ISelectedRecipe) => void;
+  selectedRecipe: Partial<ISelectedRecipe>;
+  onChange?: (
+    ref: Partial<ISelectedRecipe>,
+    newValues?: Partial<ISelectedRecipe>
+  ) => void;
   availableItems: Array<Item>;
 }
 
@@ -23,18 +26,45 @@ const RecipePickerItem = ({
   onChange = () => undefined,
 }: IRecipePickerItemProps) => {
   const sendChange = useCallback(
-    (key: keyof ISelectedRecipe, newValue?: any) => {
+    (changes: Partial<ISelectedRecipe>) => {
+      const newObject: Partial<ISelectedRecipe> = {
+        ...selectedRecipe,
+        ...changes,
+      };
+
+      if (newObject.item) {
+        if (
+          (newObject.recipe !== undefined &&
+            getRecipesForItem(newObject.item).find(
+              r => r.id === newObject.recipe
+            ) === undefined) ||
+          (newObject.recipe === undefined &&
+            getRecipesForItem(newObject.item).length > 1)
+        ) {
+          newObject.recipe = undefined;
+        }
+
+        if (
+          newObject.recipe === undefined &&
+          getRecipesForItem(newObject.item).length === 1
+        ) {
+          newObject.recipe = getRecipesForItem(newObject.item)[0].id;
+        }
+      } else {
+        newObject.recipe = undefined;
+      }
+
       onChange(selectedRecipe, {
         ...selectedRecipe,
-        [key]: newValue,
+        ...newObject,
       });
     },
     [selectedRecipe, onChange]
   );
 
   const onItemsPerSecondChange = useCallback(
-    newValue => {
-      sendChange('itemsPerSecond', newValue);
+    itemsPerSecond => {
+      sendChange({ itemsPerSecond });
     },
     [sendChange]
   );
@@ -48,14 +78,14 @@ const RecipePickerItem = ({
 
   const onItemSelect = useCallback(
     item => {
-      sendChange('item', item);
+      sendChange({ item });
     },
     [sendChange]
   );
 
   const onRecipeSelect = useCallback(
     recipe => {
-      sendChange('recipe', recipe);
+      sendChange({ recipe });
     },
     [sendChange]
   );
@@ -82,7 +112,9 @@ const RecipePickerItem = ({
             placeholder={'Select recipe'}
             onItemSelect={onRecipeSelect}
             selectedItem={selectedRecipe.recipe}
-            list={$enum(Recipe).getValues()}
+            list={getRecipesForItem(selectedRecipe.item).map(
+              recipe => recipe.id
+            )}
             getTranslation={getRecipeName}
             getIcon={(item: Recipe) => RecipeIcons[item] || ''}
           />

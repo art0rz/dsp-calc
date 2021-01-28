@@ -11,7 +11,7 @@ export const RecipeNames = {
   [Recipe.ASSEMBLER_1]: 'Assembling Machine MK.1',
 };
 
-export const ItemNames = {
+export const ItemNames: { [key in Item]?: string } = {
   [Item.IRON_ORE]: 'Iron ore',
   [Item.IRON_PLATE]: 'Iron ingot',
   [Item.MAGNET]: 'Magnet',
@@ -21,5 +21,7 @@ export const ItemNames = {
 };
 
 // until we implement translations, we'll use this shim to reduce refactoring at a later date.
-export const getItemName = (item: Item) => ItemNames[item];
-export const getRecipeName = (recipe: Recipe) => RecipeNames[recipe];
+export const getItemName = (item: Item): string =>
+  ItemNames[item] || Item[item];
+export const getRecipeName = (recipe: Recipe): string =>
+  RecipeNames[recipe] || Recipe[recipe];
