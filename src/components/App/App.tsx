@@ -23,6 +23,11 @@ export const App = () => {
     () => setShowSettingsDrawer(false),
     []
   );
+
+  const onRecipeSelectionChange = useCallback(recipes => {
+    console.log(recipes);
+  }, []);
+
   return (
     <div className="bp3-dark">
       <Navbar>
@@ -35,7 +40,7 @@ export const App = () => {
           <Button icon={'cog'} onClick={onClickOpenSettings} />
         </NavbarGroup>
       </Navbar>
-      <RecipePicker />
+      <RecipePicker onChange={onRecipeSelectionChange} />
 
       <SettingsPanel
         isOpen={showSettingsDrawer}

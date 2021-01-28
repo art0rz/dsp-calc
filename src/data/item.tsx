@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/prefer-default-export,no-shadow
-export enum Items {
+export enum Item {
   IRON_ORE,
   IRON_PLATE,
   MAGNET,
