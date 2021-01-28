@@ -34,6 +34,10 @@ export const App = () => {
     setRecipes(newSelection);
   }, []);
 
+  const onClickGithub = useCallback(newSelection => {
+    window.open('https://github.com/art0rz/dsp-calc/', '_blank');
+  }, []);
+
   useEffect(() => {
     setFactoryResults(calculateFactoryResults2(recipes));
   }, [recipes]);
@@ -47,7 +51,7 @@ export const App = () => {
           <NavbarHeading>Dyson Sphere Program Calculator</NavbarHeading>
         </NavbarGroup>
         <NavbarGroup align={'right'}>
-          <Button rightIcon={'git-repo'} onClick={onClickOpenSettings}>
+          <Button rightIcon={'git-repo'} onClick={onClickGithub}>
             Github
           </Button>
           <NavbarDivider />
