@@ -17,6 +17,8 @@ export const ItemNames: { [key in Item]?: string } = {
   [Item.GEAR_WHEEL]: 'Gear',
   [Item.BELT_1]: 'Conveyor Belt MK.1',
   [Item.ASSEMBLER_1]: 'Assembling Machine MK.1',
+  [Item.MINING_DRILL]: 'Mining Drill',
+  [Item.SMELTER]: 'Smelter',
 };
 
 // until we implement translations, we'll use this shim to reduce refactoring at a later date.
