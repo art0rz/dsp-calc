@@ -19,10 +19,12 @@ interface IRecipePickerItemProps {
     newValues?: Partial<ISelectedRecipe>
   ) => void;
   availableItems: Array<Item>;
+  showRemoveButton: boolean;
 }
 
 const RecipePickerItem = ({
   selectedRecipe,
+  showRemoveButton,
   onChange = () => undefined,
 }: IRecipePickerItemProps) => {
   const sendChange = useCallback(
@@ -119,7 +121,9 @@ const RecipePickerItem = ({
             getIcon={(item: Recipe) => RecipeIcons[item] || ''}
           />
         )}
-      {selectedRecipe && <Button icon={'cross'} onClick={onRemove} />}
+      {selectedRecipe && showRemoveButton && (
+        <Button icon={'cross'} onClick={onRemove} />
+      )}
     </ControlGroup>
   );
 };

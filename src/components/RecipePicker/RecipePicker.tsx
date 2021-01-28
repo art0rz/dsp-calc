@@ -18,12 +18,7 @@ interface IRecipePickerProps {
 const RecipePicker = ({ onChange }: IRecipePickerProps) => {
   const [selectedRecipes, setSelectedRecipes] = useState<
     Array<Partial<ISelectedRecipe>>
-  >([
-    {
-      item: Item.IRON_PLATE,
-      itemsPerSecond: 1,
-    },
-  ]);
+  >([]);
 
   const selectedItems = selectedRecipes.map(s => s.item);
   const remainingItems = $enum(Item)
@@ -69,6 +64,7 @@ const RecipePicker = ({ onChange }: IRecipePickerProps) => {
           key={selectedRecipe.item}
           onChange={onRecipePickerChange}
           availableItems={remainingItems}
+          showRemoveButton={selectedRecipes.length > 1}
         />
       ))}
       <Button icon={'plus'} onClick={onNewRecipeClick}>
