@@ -5,7 +5,6 @@ import { Item } from './item';
 export enum Recipe {
   IRON_ORE,
   IRON_PLATE,
-  IRON_PLATE_2,
   MAGNET,
   GEAR_WHEEL,
   BELT_1,
@@ -42,19 +41,6 @@ const recipeList: Array<IRecipe> = [
   },
   {
     id: Recipe.IRON_PLATE,
-    baseDuration: 1,
-    resultAmount: 1,
-    factory: Item.SMELTER,
-    ingredients: [
-      {
-        item: Item.IRON_ORE,
-        amount: 1,
-      },
-    ],
-    products: [{ item: Item.IRON_PLATE, amount: 1 }],
-  },
-  {
-    id: Recipe.IRON_PLATE_2,
     baseDuration: 1,
     resultAmount: 1,
     factory: Item.SMELTER,

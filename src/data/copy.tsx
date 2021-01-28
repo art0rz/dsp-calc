@@ -4,7 +4,6 @@ import { Recipe } from './recipes';
 export const RecipeNames = {
   [Recipe.IRON_ORE]: 'Iron ore',
   [Recipe.IRON_PLATE]: 'Iron ingot',
-  [Recipe.IRON_PLATE_2]: 'Iron ingot LV2',
   [Recipe.MAGNET]: 'Magnet',
   [Recipe.GEAR_WHEEL]: 'Gear',
   [Recipe.BELT_1]: 'Conveyor Belt MK.1',
