@@ -1,10 +1,10 @@
 import React from 'react';
 import { HTMLTable } from '@blueprintjs/core';
-import { IFactoryResult } from '../../lib/factory';
+import { IFactoryResultFlatGraph } from '../../lib/factory';
 import FactoryRecipeResultRow from '../FactoryRecipeResultRow';
 
 interface IFactorioRecipeResultProps {
-  factoryResults: Array<IFactoryResult>;
+  factoryResults: Array<IFactoryResultFlatGraph>;
 }
 
 const FactorioRecipeResult = ({

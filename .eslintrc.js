@@ -15,6 +15,7 @@ module.exports = exports = {
   ],
   plugins: ['prettier', 'react'],
   rules: {
+    'no-shadow': ['off'],
     'import/extensions': [
       'warn',
       {

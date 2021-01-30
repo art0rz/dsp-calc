@@ -1,6 +1,12 @@
 import { ISelectedRecipe } from '../components/RecipePicker/RecipePicker';
-import { getRecipesForItem, IRecipe, Recipe, Recipes } from '../data/recipes';
+import { getPreferredRecipe, IRecipe, Recipe, Recipes } from '../data/recipes';
 import { Item } from '../data/item';
+import {
+  BuildingCategory,
+  Buildings,
+  getPreferredBuilding,
+} from '../data/buildings';
+import { isResource } from '../data/resources';
 
 export type StringKeyOf<T> = Extract<keyof T, string>;
 
@@ -8,127 +14,111 @@ export type RecipeStringKeys = StringKeyOf<Recipe>;
 
 export interface IFactoryResultIngredient {
   item: Item;
-  itemsPerSecond: number;
-  factory: Item;
+  itemsPerMinute: number;
+  category: BuildingCategory;
 }
 
 export interface IFactoryResultUsedIn {
   recipe: IRecipe;
-  itemsPerSecond: number;
+  itemsPerMinute: number;
 }
 
 export interface IFactoryResult {
   outputItem: Item;
   recipe: Recipe;
-  factory: Item;
-  itemsPerSecond: number;
+  category: BuildingCategory;
+  itemsPerMinute: number;
   ingredients: Array<IFactoryResultIngredient>;
-  usedIn: Array<IFactoryResultUsedIn>;
 }
 
-const getExistingResult = (needle: Item, haystack: Array<IFactoryResult>) => {
-  return haystack.find(h => h.outputItem === needle);
-};
+export interface IFactoryResultGraph {
+  outputItem: Item;
+  recipe: Recipe;
+  category?: BuildingCategory;
+  itemsPerMinute: number;
+  ingredients: Array<IFactoryResultGraph>;
+  usedFor?: IFactoryResultGraph;
+}
 
-export const calculateFactoryResults2 = (
+export interface IFactoryResultFlatGraph
+  extends Omit<IFactoryResultGraph, 'usedFor'> {
+  usedFor: Array<IFactoryResultGraph>;
+}
+
+// const getExistingResult = (needle: Item, haystack: Array<IFactoryResult>) => {
+//   return haystack.find(h => h.outputItem === needle);
+// };
+
+export const factorySolver = (
   selectedRecipes: Array<ISelectedRecipe>,
-  results: Array<IFactoryResult> = []
-): Array<IFactoryResult> => {
-  for (const selection of selectedRecipes) {
-    const existing = getExistingResult(selection.item, results);
-    const recipe = Recipes[selection.recipe] as IRecipe;
+  results: Array<IFactoryResultGraph> = []
+): Array<IFactoryResultGraph> => {
+  // solve ingredients in every selected recipe
 
-    calculateFactoryResults2(
-      recipe.ingredients.map(ingredient => ({
-        item: ingredient.item,
-        recipe: getRecipesForItem(ingredient.item)[0].id,
-        itemsPerSecond: ingredient.amount * selection.itemsPerSecond,
-      })),
-      results
-    );
+  return [
+    ...results,
+    ...(selectedRecipes
+      .filter(selection => Recipes[selection.recipe] !== undefined)
+      .map<IFactoryResultGraph>(selection => {
+        const recipe = Recipes[selection.recipe] as IRecipe;
 
-    if (existing === undefined) {
-      results.unshift({
-        outputItem: selection.item,
-        recipe: selection.recipe,
-        factory: recipe.factory,
-        itemsPerSecond: selection.itemsPerSecond,
-        ingredients: recipe.ingredients.map(i => ({
-          item: i.item,
-          factory: getRecipesForItem(i.item)[0].factory,
-          itemsPerSecond: i.amount * selection.itemsPerSecond,
-        })),
-        usedIn: [
-          {
-            recipe: Recipes[selection.recipe] as IRecipe,
-            itemsPerSecond: selection.itemsPerSecond,
-          },
-        ],
-      });
-    } else {
-      existing.itemsPerSecond += selection.itemsPerSecond;
+        const res = {
+          outputItem: selection.item,
+          recipe: selection.recipe,
+          category: Buildings[getPreferredBuilding(recipe.category)]?.category,
+          itemsPerMinute: selection.itemsPerMinute,
+          ingredients: factorySolver(
+            recipe.ingredients
+              .map<ISelectedRecipe | null>(ingredient => {
+                if (isResource(ingredient.item) === false) {
+                  return {
+                    item: ingredient.item,
+                    recipe: getPreferredRecipe(ingredient.item).id,
+                    itemsPerMinute:
+                      (ingredient.amount * selection.itemsPerMinute) /
+                      recipe.baseDuration,
+                  };
+                }
+                return null;
+              })
+              .filter(u => u !== null) as Array<ISelectedRecipe>
+          ),
+        };
 
-      for (const ingredient of recipe.ingredients) {
-        const existingIngredient = existing.ingredients.find(
-          i => i.item === ingredient.item
-        ) as IFactoryResultIngredient;
+        res.ingredients.map(ingredient => ({ ...ingredient, usedFor: res }));
 
-        existingIngredient.itemsPerSecond +=
-          ingredient.amount * selection.itemsPerSecond;
-      }
-    }
-  }
-
-  return results;
+        return res;
+      }, results)
+      .filter(u => u !== undefined) as Array<IFactoryResultGraph>),
+  ];
 };
 
-// eslint-disable-next-line import/prefer-default-export
-export const calculateFactoryResults = (
-  selectedRecipes: Array<ISelectedRecipe>
-) => {
-  const results: {
-    [E in keyof RecipeStringKeys]?: ISelectedRecipe;
-  } = selectedRecipes.reduce(
-    (acc, selectedRecipe) => ({
+export const flattenGraph = (
+  graph: Array<IFactoryResultGraph>
+): Array<IFactoryResultFlatGraph> => {
+  // first generate a complete list of ingredients
+  const ingredients = graph.reduce<Array<IFactoryResultFlatGraph>>(
+    (acc, g) => [
       ...acc,
-      [selectedRecipe.recipe]: selectedRecipe,
-    }),
-    {}
+      ...flattenGraph(g.ingredients).map(i => ({ ...i, usedFor: [g] })),
+    ],
+    graph.map(g => ({ ...g, usedFor: [] }))
   );
-  for (let i = 0; i < selectedRecipes.length; i += 1) {
-    const recipeSelection = selectedRecipes[i];
 
-    if (recipeSelection.recipe !== undefined) {
-      const recipe = Recipes[recipeSelection.recipe];
-      if (recipe !== undefined) {
-        const recipeResults = calculateFactoryResults(
-          recipe.ingredients.map(ingredient => ({
-            item: ingredient.item,
-            recipe: getRecipesForItem(ingredient.item)[0].id,
-            itemsPerSecond:
-              (ingredient.amount * recipeSelection.itemsPerSecond) /
-              recipe.baseDuration /
-              recipe.resultAmount,
-          }))
-        );
+  // then add up all the totals
+  return ingredients.reduce<Array<IFactoryResultFlatGraph>>(
+    (acc, ingredient) => {
+      const existing = acc.find(l => l.outputItem === ingredient.outputItem);
 
-        for (const key in recipeResults) {
-          if (recipeResults[key] !== undefined) {
-            if (results[key] === undefined) {
-              results[key] = recipeResults[key];
-            } else if (results[key] !== undefined) {
-              // @ts-ignore
-              results[key].itemsPerSecond += recipeResults[key].itemsPerSecond;
-            }
-          }
-        }
+      if (existing) {
+        existing.itemsPerMinute += ingredient.itemsPerMinute;
+        existing.usedFor.push(...ingredient.usedFor);
+      } else {
+        return [...acc, { ...ingredient }];
       }
-    }
-  }
 
-  return results;
+      return [...acc];
+    },
+    []
+  );
 };
-
-/*
-  {
- */

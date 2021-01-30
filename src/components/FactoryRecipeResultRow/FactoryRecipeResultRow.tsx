@@ -1,12 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import { Button, Divider, HTMLTable, Icon } from '@blueprintjs/core';
-import { IFactoryResult } from '../../lib/factory';
-import { getRecipesForItem, ItemIcons } from '../../data/recipes';
+import { IFactoryResultFlatGraph } from '../../lib/factory';
+import { getRecipesForItem } from '../../data/recipes';
 import { getItemName, getRecipeName } from '../../data/copy';
+import { BuildingIcons, ItemIcons } from '../../data/icons';
+import { getPreferredBuilding } from '../../data/buildings';
 
 interface IFactoryRecipeResultRowProps {
-  result: IFactoryResult;
-  factoryResults: Array<IFactoryResult>;
+  result: IFactoryResultFlatGraph;
+  factoryResults: Array<IFactoryResultFlatGraph>;
 }
 
 const FactoryRecipeResultRow = ({
@@ -36,26 +38,34 @@ const FactoryRecipeResultRow = ({
             <>({getRecipeName(result.recipe)})</>
           ) : null}
         </td>
-        <td>{result.itemsPerSecond}</td>
+        <td>{result.itemsPerMinute}</td>
         <td>
           <>
-            <img className={'icon'} src={ItemIcons[result.factory]} />{' '}
-            {getItemName(result.factory)}
+            {result.category && (
+              <>
+                <img
+                  className={'icon'}
+                  src={BuildingIcons[getPreferredBuilding(result.category)]}
+                />{' '}
+                {getPreferredBuilding(result.category)}
+              </>
+            )}
           </>
         </td>
       </tr>
       {collapsed && (
         <tr>
           <td colSpan={3}>
+            <h5 className={'bp3-heading'}>Ingredients</h5>
             <HTMLTable striped={true}>
               <tbody>
                 {result.ingredients.map(ingredient => (
-                  <React.Fragment key={ingredient.item}>
+                  <React.Fragment key={ingredient.outputItem}>
                     <tr>
                       <td>
                         <img
                           className={'icon'}
-                          src={ItemIcons[ingredient.item]}
+                          src={ItemIcons[ingredient.outputItem]}
                         />{' '}
                         <Icon icon={'arrow-right'} />{' '}
                         <img
@@ -63,12 +73,18 @@ const FactoryRecipeResultRow = ({
                           src={ItemIcons[result.outputItem]}
                         />
                       </td>
-                      <td>{ingredient.itemsPerSecond}</td>
+                      <td>{ingredient.itemsPerMinute}</td>
                       <td>
-                        <img
-                          className={'icon'}
-                          src={ItemIcons[ingredient.factory]}
-                        />
+                        {ingredient.category && (
+                          <img
+                            className={'icon'}
+                            src={
+                              BuildingIcons[
+                                getPreferredBuilding(ingredient.category)
+                              ]
+                            }
+                          />
+                        )}
                       </td>
                     </tr>
                   </React.Fragment>
@@ -77,15 +93,13 @@ const FactoryRecipeResultRow = ({
             </HTMLTable>
             <Divider />
 
+            <h5 className={'bp3-heading'}>Used by</h5>
             <HTMLTable striped={true}>
               <tbody>
-                <tr>
-                  {factoryResults
-                    .filter(res =>
-                      res.ingredients.find(i => i.item === result.outputItem)
-                    )
-                    .map(f => (
-                      <React.Fragment key={f.outputItem}>
+                {result.usedFor.map(f => {
+                  return (
+                    <React.Fragment key={f.outputItem}>
+                      <tr>
                         <td>
                           <img
                             className={'icon'}
@@ -97,10 +111,11 @@ const FactoryRecipeResultRow = ({
                             src={ItemIcons[f.outputItem]}
                           />
                         </td>
-                        <td>{f.itemsPerSecond}</td>
-                      </React.Fragment>
-                    ))}
-                </tr>
+                        <td>{f.itemsPerMinute}</td>
+                      </tr>
+                    </React.Fragment>
+                  );
+                })}
               </tbody>
             </HTMLTable>
           </td>

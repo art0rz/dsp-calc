@@ -5,12 +5,8 @@ import { Item } from '../../data/item';
 import { ISelectedRecipe } from '../RecipePicker/RecipePicker';
 import ItemSelect from '../ItemSelect/ItemSelect';
 import { getItemName, getRecipeName } from '../../data/copy';
-import {
-  getRecipesForItem,
-  ItemIcons,
-  Recipe,
-  RecipeIcons,
-} from '../../data/recipes';
+import { getRecipesForItem, Recipe } from '../../data/recipes';
+import { ItemIcons, RecipeIcons } from '../../data/icons';
 
 interface IRecipePickerItemProps {
   selectedRecipe: Partial<ISelectedRecipe>;
@@ -64,9 +60,9 @@ const RecipePickerItem = ({
     [selectedRecipe, onChange]
   );
 
-  const onItemsPerSecondChange = useCallback(
-    itemsPerSecond => {
-      sendChange({ itemsPerSecond });
+  const onitemsPerMinuteChange = useCallback(
+    itemsPerMinute => {
+      sendChange({ itemsPerMinute });
     },
     [sendChange]
   );
@@ -105,8 +101,8 @@ const RecipePickerItem = ({
       <NumericInput
         placeholder="Items p/m"
         min={1}
-        value={selectedRecipe ? selectedRecipe.itemsPerSecond : 1}
-        onValueChange={onItemsPerSecondChange}
+        value={selectedRecipe ? selectedRecipe.itemsPerMinute : 1}
+        onValueChange={onitemsPerMinuteChange}
       />
       {selectedRecipe.item !== undefined &&
         getRecipesForItem(selectedRecipe.item).length > 1 && (

@@ -12,13 +12,13 @@ import { ReactComponent as Logo } from '../../dsp-logo.svg';
 import RecipePicker from '../RecipePicker';
 import SettingsPanel from '../SettingsPanel';
 import { ISelectedRecipe } from '../RecipePicker/RecipePicker';
-import { calculateFactoryResults2 } from '../../lib/factory';
+import { factorySolver, flattenGraph } from '../../lib/factory';
 import FactorioRecipeResult from '../FactoryRecipeResult';
 
 export const App = () => {
   const [showSettingsDrawer, setShowSettingsDrawer] = useState(false);
   const [factoryResults, setFactoryResults] = useState<
-    ReturnType<typeof calculateFactoryResults2>
+    ReturnType<typeof flattenGraph>
   >([]);
   const [recipes, setRecipes] = useState<Array<ISelectedRecipe>>([]);
   const onClickOpenSettings = useCallback(
@@ -39,7 +39,7 @@ export const App = () => {
   }, []);
 
   useEffect(() => {
-    setFactoryResults(calculateFactoryResults2(recipes));
+    setFactoryResults(flattenGraph(factorySolver(recipes)));
   }, [recipes]);
 
   return (

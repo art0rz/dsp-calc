@@ -8,7 +8,7 @@ import { Recipe } from '../../data/recipes';
 export interface ISelectedRecipe {
   item: Item;
   recipe: Recipe;
-  itemsPerSecond: number;
+  itemsPerMinute: number;
 }
 
 interface IRecipePickerProps {
@@ -36,9 +36,10 @@ const RecipePicker = ({ onChange }: IRecipePickerProps) => {
       onChange(
         newSelection.filter(
           n =>
+            n !== undefined &&
             n.recipe !== undefined &&
             n.item !== undefined &&
-            n.itemsPerSecond !== undefined
+            n.itemsPerMinute !== undefined
         ) as Array<ISelectedRecipe>
       );
     },
@@ -50,7 +51,7 @@ const RecipePicker = ({ onChange }: IRecipePickerProps) => {
       ...selectedRecipes,
       {
         item: undefined,
-        itemsPerSecond: 1,
+        itemsPerMinute: 1,
       },
     ]);
   }, [selectedRecipes]);
